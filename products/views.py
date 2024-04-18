@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product
-from .forms import ProductForm
+from .forms import ProductForm, CommentForm
 from django.views.decorators.http import require_http_methods, require_POST
 
 # Create your views here.
@@ -12,9 +12,13 @@ def index(request):
 
 def product_detail(request, pk): # pk 로 각 게시글의 상세 페이지 보기
     product = get_object_or_404(Product, pk=pk)
-    # Comment 작성한 것 보여주기
-    # Comment Form 보여주기
-    context = { "product": product}
+    comments = product.comments.all()
+    comment_form = CommentForm()
+    context = {
+        "product": product,
+        "comments": comments,
+        "comment_form": comment_form,
+    }
     return render(request, "products/product_detail.html", context)
 
 
@@ -49,3 +53,13 @@ def delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.delete()
     return redirect("products:index")
+
+
+def comment_create(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comment = form.save()
+        comment.product = comment
+        comment.save()
+        return redirect("products:product_detail", pk)

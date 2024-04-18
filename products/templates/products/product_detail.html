@@ -13,5 +13,7 @@
     <a href="{% url 'products:index' %}"> 목록으로 </a>
 
     <h4> 댓글 </h4>
-    
+    {% for comment in comments %}
+        <p>{{ comment.content }}</p>
+    {% endfor %}
 {% endblock content %}
