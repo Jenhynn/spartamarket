@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product
+from .models import Product, Comment
 from .forms import ProductForm, CommentForm
 from django.views.decorators.http import require_http_methods, require_POST
 
@@ -62,4 +62,10 @@ def comment_create(request, pk):
         comment = form.save(commit = False) # commit=False 를 해서 바로 저장하지 않음
         comment.product = product
         comment.save()
+    return redirect("products:product_detail", pk)
+
+
+def comment_delete(request, pk, comment_id):
+    comment = get_object_or_404(Comment, pk = comment_id)
+    comment.delete()
     return redirect("products:product_detail", pk)
