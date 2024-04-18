@@ -2,4 +2,12 @@
 
 {% block content %}
     <h1>Main Page : INDEX</h1>
+    <a href="{% url 'products:create' %}"> 새로운 글 작성 </a>
+    {% for product in products %}
+    <li>
+        <p>{{ product.pk }}</p>
+        <a href="{% url 'products:product_detail' product.id %}"> {{product.title}} </a>
+        <p> {{ product.price }} </p>
+    </li>
+    {% endfor %}
 {% endblock content %}
