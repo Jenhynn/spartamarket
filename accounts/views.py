@@ -78,10 +78,10 @@ def delete(request):
 # 비밀번호 변경
 def change_password(request):
     if request.method == "POST":
-        form = PasswordChangeForm(request.user, request.POST) # 상속 받은 SetPasswordForm이 self, user, *args, **kwargs
+        form = PasswordChangeForm(request.user, request.POST) # 상속 받은 SetPasswordForm이 self, user, *args, **kwargs 순서
         if form.is_valid():
             form.save()
-            update_session_auth_hash(request, form.user)
+            update_session_auth_hash(request, form.user) 
             return redirect("accounts:index")
     else:
         form = PasswordChangeForm(request.user)
