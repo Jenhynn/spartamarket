@@ -8,9 +8,8 @@ from .forms import CustomUserCreationForm
 
 # 로그인
 def login(request):
-    form = AuthenticationForm()
     if request.method == "POST":
-        form = AuthenticationForm(request.POST)
+        form = AuthenticationForm(data = request.POST)
         if form.is_valid():
             login_auth(request, form.get_user())
             return redirect("signup")
