@@ -59,7 +59,7 @@ def comment_create(request, pk):
     product = get_object_or_404(Product, pk=pk)
     form = CommentForm(request.POST)
     if form.is_valid():
-        comment = form.save()
-        comment.product = comment
+        comment = form.save(commit = False) # commit=False 를 해서 바로 저장하지 않음
+        comment.product = product
         comment.save()
-        return redirect("products:product_detail", pk)
+    return redirect("products:product_detail", pk)

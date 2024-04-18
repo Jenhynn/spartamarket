@@ -15,5 +15,12 @@
     <h4> 댓글 </h4>
     {% for comment in comments %}
         <p>{{ comment.content }}</p>
+        <p>{{ comment.created_at }}</p>
     {% endfor %}
+
+    <form action="{% url 'products:comment_create' product.id %}" method="POST">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit"> 댓글 등록 </button>
+    </form>
 {% endblock content %}
