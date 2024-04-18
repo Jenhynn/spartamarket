@@ -3,6 +3,7 @@
 {% block content %}
     <h1>상세 페이지</h1>
     <h3>{{ product.title }}</h3>
+    <p>작성자: </p>
     <p>{{ product.price }}</p>
     
     <div> {{ product.content }}</div>
@@ -14,6 +15,7 @@
 
     <h4> 댓글 </h4>
     {% for comment in comments %}
+        <p>FK로 댓글 작성한 유저네임 보이기</p>
         <p>{{ comment.content }}</p>
         <p>{{ comment.created_at }}</p>
         <a href="{% url 'products:comment_delete' product.id comment.id%}"> 삭제 </a>

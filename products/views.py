@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product, Comment
 from .forms import ProductForm, CommentForm
 from django.views.decorators.http import require_http_methods, require_POST
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -22,6 +23,7 @@ def product_detail(request, pk): # pk 로 각 게시글의 상세 페이지 보�
     return render(request, "products/product_detail.html", context)
 
 
+@login_required
 def create(request):
     form = ProductForm(request.POST)
     if form.is_valid():
@@ -31,6 +33,7 @@ def create(request):
     return render(request, "products/create.html", context)
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def edit(request, pk):
     product = get_object_or_404(Product, pk=pk)
@@ -49,12 +52,17 @@ def edit(request, pk):
     return render(request, "products/edit.html", context)
 
 
+@login_required
+@require_POST
 def delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    product.delete()
+    if request.user.is_authenticated:
+        if "작성자" == request.user :
+            product.delete()
     return redirect("products:index")
 
 
+@login_required
 def comment_create(request, pk):
     product = get_object_or_404(Product, pk=pk)
     form = CommentForm(request.POST)
@@ -65,7 +73,10 @@ def comment_create(request, pk):
     return redirect("products:product_detail", pk)
 
 
+@login_required
+@require_POST
 def comment_delete(request, pk, comment_id):
     comment = get_object_or_404(Comment, pk = comment_id)
-    comment.delete()
+    if comment.user == request.user:
+        comment.delete()
     return redirect("products:product_detail", pk)
