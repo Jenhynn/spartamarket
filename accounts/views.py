@@ -6,50 +6,60 @@ from django.contrib.auth import logout as logout_auth
 from .forms import CustomUserCreationForm
 
 
+def index(request):
+    return render(request, "accounts/index.html")
+
 # 로그인
+@require_http_methods(["GET", "POST"])
 def login(request):
     if request.method == "POST":
         form = AuthenticationForm(data = request.POST)
         if form.is_valid():
             login_auth(request, form.get_user())
-            return redirect("signup")
+            next_url = request.GET.get("next") or "accounts:index" # 로그인 후 이동 (기존에 접속하려고 했던 next 주소 또는 목록 페이지로) *** products:index로 바꾸기
+            return redirect(next_url)
     else:
-        form = AuthenticationForm()
+        form = AuthenticationForm() # POST method가 아닐 경우 (GET의 경우) Form 보여줌
 
     context = {"form": form}
     return render(request, "accounts/login.html", context)
 
 
-# 로그아웃
+# 로그아웃 # html에서 로그인 되었을 때만 보이기
+@require_POST
 def logout(request):
-    pass
+    logout_auth(request)
+    return redirect("accounts:index") # products:index로 redirect
 
 
 # 회원가입
 @require_http_methods(["GET", "POST"])
 def signup(request):
     if request.method == "POST":
-        form = CustomUserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST) # 바인딩 된 폼
         if form.is_valid():
-            user = form.save()
-            login_auth(request, user)
-            return redirect("login")
+            user = form.save() # 폼 저장 후
+            login_auth(request, user) # 로그인 해서
+            return redirect("accounts:index") # products:index로 redirect
     else:
-        form = CustomUserCreationForm()
+        form = CustomUserCreationForm() # GET 일 경우 회원가입 form 보여줌
     context = {
         "form": form
     }
     return render(request, "accounts/signup.html", context)
 
 
-# 회원 정보 수정
+# 회원 정보 수정: 로그인 된 회원 본인일 때만 회원 정보 수정 가능
 def update(request):
     pass
 
 
-# 회원 탈퇴
+# 회원 탈퇴 # 로그인 된 회원 본인일 때만 보이기
 def delete(request):
-    pass
+    if request.user_is_authenticated:
+        request.user.delete()
+        logout_auth(request) # 세션을 지우기 위해 로그아웃 해주기
+    return redirect("") # product:index로 메인 화면으로 리다이렉트
 
 
 # 비밀번호 변경
