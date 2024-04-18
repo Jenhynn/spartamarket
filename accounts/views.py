@@ -28,7 +28,8 @@ def login(request):
 # 로그아웃 # html에서 로그인 되었을 때만 보이기
 @require_POST
 def logout(request):
-    logout_auth(request)
+    if request.user.is_authenticated:
+        logout_auth(request)
     return redirect("accounts:index") # products:index로 redirect
 
 
@@ -49,17 +50,17 @@ def signup(request):
     return render(request, "accounts/signup.html", context)
 
 
-# 회원 정보 수정: 로그인 된 회원 본인일 때만 회원 정보 수정 가능
+# 회원 정보 수정: html에서 로그인 된 회원 본인일 때만 회원 정보 수정 가능
 def update(request):
-    pass
+    return render(request, "index.html")
 
 
-# 회원 탈퇴 # 로그인 된 회원 본인일 때만 보이기
+# 회원 탈퇴 # html에서 로그인 된 회원 본인일 때만 보이기
 def delete(request):
-    if request.user_is_authenticated:
+    if request.user.is_authenticated:
         request.user.delete()
         logout_auth(request) # 세션을 지우기 위해 로그아웃 해주기
-    return redirect("") # product:index로 메인 화면으로 리다이렉트
+    return redirect("accounts:index") # product:index로 메인 화면으로 리다이렉트
 
 
 # 비밀번호 변경
