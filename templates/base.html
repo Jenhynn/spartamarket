@@ -11,6 +11,7 @@
         <h4>우리를 위한 중고거래</h4>
 
         {% if request.user.is_authenticated %}
+        <a href="{% url 'accounts:update' %}"> {{ request.user.username }} 님</a>
         <form action="{% url 'accounts:logout' %}" method="POST">
             {% csrf_token %}
             <input type="submit" value="로그아웃">

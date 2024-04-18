@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST, require_http_methods
-from django.contrib.auth.forms import (AuthenticationForm,)
+from django.contrib.auth.forms import (AuthenticationForm, PasswordChangeForm)
 from django.contrib.auth import login as login_auth
 from django.contrib.auth import logout as logout_auth
-from .forms import CustomUserCreationForm
+from django.contrib.auth import update_session_auth_hash
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 
 def index(request):
@@ -21,8 +22,8 @@ def login(request):
     else:
         form = AuthenticationForm() # POST method가 아닐 경우 (GET의 경우) Form 보여줌
 
-    context = {"form": form}
-    return render(request, "accounts/login.html", context)
+    context = {"form": form} #context에 form 담아서 넘기기
+    return render(request, "accounts/login.html", context) 
 
 
 # 로그아웃 # html에서 로그인 되었을 때만 보이기
@@ -51,11 +52,22 @@ def signup(request):
 
 
 # 회원 정보 수정: html에서 로그인 된 회원 본인일 때만 회원 정보 수정 가능
+@require_http_methods(["GET", "POST"])
 def update(request):
-    return render(request, "index.html")
+    if request.method == "POST":
+        form = CustomUserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect("accounts:index") # products:index로 redirect
+    else:
+        form = CustomUserChangeForm(instance = request.user)
+    
+    context = { "form": form}
+    return render(request, "accounts/update.html", context)
 
 
 # 회원 탈퇴 # html에서 로그인 된 회원 본인일 때만 보이기
+@require_POST
 def delete(request):
     if request.user.is_authenticated:
         request.user.delete()
@@ -65,4 +77,13 @@ def delete(request):
 
 # 비밀번호 변경
 def change_password(request):
-    pass
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user, request.POST) # 상속 받은 SetPasswordForm이 self, user, *args, **kwargs
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect("accounts:index")
+    else:
+        form = PasswordChangeForm(request.user)
+    context = {"form" : form}
+    return render(request, "accounts/change_password.html", context)
