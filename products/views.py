@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product
 from .forms import ProductForm
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 
 # Create your views here.
 def index(request):
@@ -43,3 +43,9 @@ def edit(request, pk):
         "product": product,
     }
     return render(request, "products/edit.html", context)
+
+
+def delete(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.delete()
+    return redirect("products:index")

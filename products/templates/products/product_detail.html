@@ -9,6 +9,7 @@
     <p>{{ product.created_at }}</p>
 
     <a href="{% url 'products:edit' product.id %}"> 수정 </a>
+    <a href="{% url 'products:delete' product.id %}"> 삭제 </a>
     <a href="{% url 'products:index' %}"> 목록으로 </a>
 
     <h4> 댓글 </h4>
