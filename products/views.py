@@ -2,8 +2,8 @@ from django.shortcuts import render
 
 # Create your views here.
 def index(request):
-    return render(request, "index.html")
+    return render(request, "products/index.html")
 
 
-def list(request):
-    pass
+def product_detail(request):
+    return render(request, "products/product_detail.html")
