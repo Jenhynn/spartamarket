@@ -10,7 +10,7 @@ def index(request):
     context = {"products": products}
     return render(request, "products/index.html", context)
 
-
+@login_required
 def product_detail(request, pk): # pk 로 각 게시글의 상세 페이지 보기
     product = get_object_or_404(Product, pk=pk)
     comments = product.comments.all()
