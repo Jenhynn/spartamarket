@@ -1,19 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Main Page : INDEX</h1>
     <a href="{% url 'products:create' %}"> 새로운 글 작성 </a>
 
     {% for product in products %}
-    <li>
-        <p>{{ product.pk }}</p>
-        {% if request.user.is_authenticated %}
-            <a href="{% url 'products:product_detail' product.id %}"> {{product.title}} </a>
-        {% else%}
-            <p> {{product.title}} </p>
-        {% endif %}
-        <p> {{ product.author.username }}</p>
-        <p> {{ product.price }} </p>
-    </li>
+    <div class="card">
+        <div class="card-header">
+            {{ product.pk }}
+          </div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'products:product_detail' product.id %}"> {{product.title}} </a>
+                    {% else%}
+                        {{product.title}}
+                    {% endif %}
+                </h5>
+                
+                <p> 작성자: {{ product.author.username }}</p>
+                <p> 가격: {{ product.price }} </p>
+            </div>
+    </div>
     {% endfor %}
 {% endblock content %}
