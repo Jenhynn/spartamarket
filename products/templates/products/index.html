@@ -12,6 +12,7 @@
         {% else%}
             <p> {{product.title}} </p>
         {% endif %}
+        <p> {{ product.author.username }}</p>
         <p> {{ product.price }} </p>
     </li>
     {% endfor %}

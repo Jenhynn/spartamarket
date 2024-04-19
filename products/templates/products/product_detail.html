@@ -3,23 +3,29 @@
 {% block content %}
     <h1>상세 페이지</h1>
     <h3>{{ product.title }}</h3>
-    <p>작성자: </p>
-    <p>{{ product.price }}</p>
+    <p>작성자: {{ product.author.username }}</p>
+    <p>가격: {{ product.price }}</p>
     
     <div> {{ product.content }}</div>
     <p>{{ product.created_at }}</p>
 
-    <a href="{% url 'products:edit' product.id %}"> 수정 </a>
-    <a href="{% url 'products:delete' product.id %}"> 삭제 </a>
+    {% if request.user == product.author %}
+        <a href="{% url 'products:edit' product.id %}"> 수정 </a>
+        <a href="{% url 'products:delete' product.id %}"> 삭제 </a>
+    {% endif %}
+
     <a href="{% url 'products:index' %}"> 목록으로 </a>
 
-    <h4> 댓글 </h4>
+    <h4> 댓글 {{ comments | length}} 개</h4>
     {% for comment in comments %}
-        <p>FK로 댓글 작성한 유저네임 보이기</p>
+        <p>작성자: {{ comment.author.username }}</p>
         <p>{{ comment.content }}</p>
         <p>{{ comment.created_at }}</p>
-        <a href="{% url 'products:comment_delete' product.id comment.id%}"> 삭제 </a>
+        {% if request.user == comment.author %}
+            <a href="{% url 'products:comment_delete' product.id comment.id%}"> 삭제 </a>
+        {% endif %}    
     {% endfor %}
+
     {% if request.user.is_authenticated %}
     <form action="{% url 'products:comment_create' product.id %}" method="POST">
         {% csrf_token %}

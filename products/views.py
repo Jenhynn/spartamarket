@@ -27,7 +27,9 @@ def product_detail(request, pk): # pk 로 각 게시글의 상세 페이지 보�
 def create(request):
     form = ProductForm(request.POST)
     if form.is_valid():
-        product = form.save()
+        product = form.save(commit = False)
+        product.author = request.user
+        product.save()
         return redirect("products:product_detail", product.id)
     context = {"form" : form}
     return render(request, "products/create.html", context)
@@ -68,6 +70,7 @@ def comment_create(request, pk):
     form = CommentForm(request.POST)
     if form.is_valid():
         comment = form.save(commit = False) # commit=False 를 해서 바로 저장하지 않음
+        comment.author = request.user
         comment.product = product
         comment.save()
     return redirect("products:product_detail", pk)
