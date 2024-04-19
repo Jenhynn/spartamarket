@@ -79,10 +79,22 @@ def comment_create(request, pk):
     return redirect("products:product_detail", pk)
 
 
-@login_required
 @require_POST
 def comment_delete(request, pk, comment_id):
-    comment = get_object_or_404(Comment, pk = comment_id)
-    if comment.user == request.user:
-        comment.delete()
+    if request.user.is_authenticated:
+        comment = get_object_or_404(Comment, pk = comment_id)
+        if comment.user == request.user:
+            comment.delete()
     return redirect("products:product_detail", pk)
+
+
+@require_POST
+def like(request, pk):
+    if request.user.is_authenticated:
+        product = get_object_or_404(Product, pk = pk)
+        if product.like_users.filter(pk = request.user.pk).exists():
+            product.like_users.remove(request.user) # 찜 취소
+        else:
+            product.like_users.add(request.user) # 찜하기
+        return redirect("products:product_detail", pk)
+    return redirect("accounts:login")

@@ -9,6 +9,15 @@
     <div> {{ product.content }}</div>
     <p>{{ product.created_at }}</p>
 
+    <form action="{% url 'products:like' product.pk%}" method="POST">
+        {% csrf_token %}
+        {% if request.user in product.like_users.all %}
+            <input type="submit" value="찜하기">
+        {% else %}
+            <input type="submit" value="찜 취소">
+        {% endif %}
+    </form>
+
     {% if request.user == product.author %}
         <a href="{% url 'products:edit' product.id %}"> 수정 </a>
         <form action="{% url 'products:delete' product.id %}" method="POST">
