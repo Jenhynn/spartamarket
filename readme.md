@@ -9,12 +9,11 @@
 * 24.04.17 ~ 24.04.19 (3일)
 
 ### 💻 개발 환경
-python
-django
-SQLite
-HTML / CSS
+- Backend: python, django, SQLite
+- Frontend: HTML / CSS
 
 ### 📂 주요 기능
+--
 #### 회원 기능
 - 회원가입
 - 로그인
