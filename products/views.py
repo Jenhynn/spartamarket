@@ -39,13 +39,16 @@ def create(request):
 @require_http_methods(["GET", "POST"])
 def edit(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    if request.method == "POST":
-        form = ProductForm(request.POST, instance = product)
-        if form.is_valid():
-            product = form.save()
-            return redirect("products:product_detail", product.pk)
+    if product.author == request.user:
+        if request.method == "POST":
+            form = ProductForm(request.POST, instance = product)
+            if form.is_valid():
+                product = form.save()
+                return redirect("products:product_detail", product.pk)
+        else:
+            form = ProductForm(instance = product)
     else:
-        form = ProductForm(instance = product)
+        return redirect("products:product_detail", product.pk)
     
     context = {
         "form" : form,
@@ -54,17 +57,17 @@ def edit(request, pk):
     return render(request, "products/edit.html", context)
 
 
-@login_required
 @require_POST
 def delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.user.is_authenticated:
-        if "작성자" == request.user :
+        if product.author == request.user:
+            product = get_object_or_404(Product, pk=pk)
             product.delete()
     return redirect("products:index")
 
 
-@login_required
+@require_POST
 def comment_create(request, pk):
     product = get_object_or_404(Product, pk=pk)
     form = CommentForm(request.POST)
