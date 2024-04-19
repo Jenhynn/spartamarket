@@ -3,4 +3,6 @@ from django.contrib.auth.models import AbstractUser
 
 # custom user model을 작성
 class User(AbstractUser):
-    pass
+    following = models.ManyToManyField(
+        'self', related_name="followers", symmetrical=False
+        )

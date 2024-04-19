@@ -7,4 +7,5 @@ app_name = "users"
 urlpatterns = [
     path('', views.users, name="users"),
     path('profile/<int:id>/', views.profile, name="profile"),
+    path('<int:user_id>/follow', views.follow, name="follow")
 ]
