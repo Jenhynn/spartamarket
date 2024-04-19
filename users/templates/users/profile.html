@@ -20,6 +20,18 @@
         팔로잉 수: {{ member.following.all | length }}
     </div>
 
-    내가 등록한 물품: {{ product.author_id.filter(pk = member.id)}}
-    내가 찜한 물건:
+    <div>
+        내가 등록한 물품: 
+        {% for product in products %}
+            <li><a href="{% url 'products:product_detail' product.id %}">{{ product.title }}</a></li>
+        {% endfor %}
+    </div>
+    <div>
+        내가 찜한 물건: 
+        {% for liked_product in liked_products %}
+            <li><a href="{% url 'products:product_detail' liked_product.id %}">{{ liked_product.title }}</a></li>
+        {% endfor %}
+
+    </div>
+
 {% endblock content %}
